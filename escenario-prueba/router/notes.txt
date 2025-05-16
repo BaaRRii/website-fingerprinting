@@ -1,0 +1,16 @@
+Añadir retado de 100ms
+tc qdisc add dev <nombre_interfaz> root netem delay 100ms
+tc qdisc change dev <nombre_interfaz> root netem delay 100ms 10ms 10%
+
+Añadir pérdida de paquetes del 1%
+tc qdisc change dev <nombre_interfaz> root netem loss 1%
+Pérdida de 1% aleatoria
+tc qdisc change dev <nombre_interfaz> root netem loss random 1%
+Basada en correlacion
+tc qdisc change dev <nombre_interfaz> root netem loss 1% 25%
+
+Limitar el ancho de banda a 1 Mbit/s
+tc qdisc add dev <nombre_interfaz> root tbf rate 1mbit burst 32kbit latency 400ms
+
+Eliminar las reglas del traffic control
+tc qdisc del dev <nombre_interfaz> root

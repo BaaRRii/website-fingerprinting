@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  servidor:
+    build: ./servidor
+    volumes:
+      - ./servidor/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./servidor/nginx/certs:/etc/nginx/certs:ro
+    networks:
+      server_net:
+        ipv4_address: 10.0.2.5
+    privileged: true
+    command: /bin/bash -c "ip route add 10.0.1.0/24 via 10.0.2.100; ethtool -K eth0 tso off gso off gro off; service nginx start; sleep infinity"
+    hostname: servidor
+
+  router:
+    build: ./router
+    networks:
+      client_net:
+        ipv4_address: 10.0.1.100
+      server_net:
+        ipv4_address: 10.0.2.100
+    privileged: true
+    command: /bin/bash -c "ip addr add 10.0.1.1/24 dev eth0; ip link set dev eth0 up; ip addr add 10.0.2.1/24 dev eth1; ip link set dev eth1 up; echo 1 > /proc/sys/net/ipv4/ip_forward; tc qdisc add dev eth0 root netem delay 6ms 0ms loss 0%; tc qdisc add dev eth1 root netem delay 6ms 0ms loss 0%; sleep infinity"
+    hostname: router
+
+  cliente:
+    build:
+      context: ./cliente
+      dockerfile: ./Dockerfile
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./pcaps:/app/pcaps  # Montar directorio para guardar capturas
+    networks:
+      client_net:
+        ipv4_address: 10.0.1.5
+    privileged: true
+    command: /bin/bash -c "ip route add 10.0.2.0/24 via 10.0.1.100; ethtool -K eth0 tso off gso off gro off; sleep infinity"
+    hostname: cliente
+
+networks:
+  client_net:
+    ipam:
+      config:
+        - subnet: 10.0.1.0/24
+  server_net:
+    ipam:
+      config:
+        - subnet: 10.0.2.0/24
