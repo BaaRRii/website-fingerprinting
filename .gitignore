@@ -13,7 +13,9 @@ escenario-prueba/cliente/sites_prev.txt
 
 escenario-prueba/pcaps/
 
-escenario-prueba/servidor/html
+escenario-prueba/servidor/html/juguete
+escenario-prueba/servidor/html/poblation
+
 escenario-prueba/servidor/nginx/certs/
 escenario-prueba/servidor/gen.py
 
