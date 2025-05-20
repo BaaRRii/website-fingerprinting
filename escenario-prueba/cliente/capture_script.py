@@ -104,7 +104,7 @@ sites = open("sites.txt").read().splitlines()
 
 NUM_CAPTURES = 35
 
-for i in range(26, NUM_CAPTURES):
+for i in range(0, NUM_CAPTURES):
     for site in sites:
         capture(site, i)
         
