@@ -9,6 +9,8 @@ import subprocess
 import time
 import os
 
+os.environ['SSLKEYLOGFILE'] = '/app/sslkeys.log'
+
 def setup_chrome():
     options = Options()
     options.add_argument("--headless")
